@@ -1,6 +1,10 @@
 from flask import session
 from app import db
-import csv
+from app.models import State
+import election_reader
 
 def init_db():
-    print('Hi')
+    state = State()
+    state = election_reader.read_csv(state)
+    db.session.add(state)
+    db.session.commit()

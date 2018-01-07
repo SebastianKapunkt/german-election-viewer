@@ -1,9 +1,16 @@
 from app import db
 
+
 class Party(db.Model):
     __tablename__ = 'parties'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
+
+    def __repr__(self):
+        return (
+        f'{self.__class__.__name__}('
+        f'{self.id},{self.name})'
+    )
 
 class Election_Result(db.Model):
     __tablename__ = 'election_results'
@@ -13,23 +20,78 @@ class Election_Result(db.Model):
     second_previsional = db.Column(db.Integer)
     second_period_previsional = db.Column(db.Integer)
 
-    area_results = db.relationship("Election_Area_Result", back_populates="result")
-
     party_id = db.Column(db.Integer, db.ForeignKey('parties.id'))
     party = db.relationship(Party)
 
-class Election_Area(db.Model):
-    __tablename__ = 'election_areas'
+    constituency_id = db.Column(db.Integer, db.ForeignKey('constituencies.id'), nullable=True)
+    federal_state_id = db.Column(db.Integer, db.ForeignKey('federal_states.id'), nullable=True)
+    state_id = db.Column(db.Integer, db.ForeignKey('states.id'), nullable=True)
+
+    def __repr__(self):
+        return (
+        f'{self.__class__.__name__}('
+        f'{self.id},{self.first_previsional},{self.first_period_previsional},{self.second_previsional},{self.second_period_previsional},{self.party!r})'
+    )
+
+class Constituency(db.Model):
+    __tablename__ = 'constituencies'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
-    type = db.Column(db.String)
-    area_results = db.relationship("Election_Area_Result", back_populates="area")
 
-class Election_Area_Result(db.Model):
-    __tablename__ = 'election_area_result'
+    federal_state_id = db.Column(
+        db.Integer,
+        db.ForeignKey('federal_states.id'),
+        nullable=False
+    )
+    federal_state = db.relationship("Federal_State", back_populates="constituencies")
+
+    election_results = db.relationship('Election_Result', backref='constituency', lazy=True)
+
+    def __repr__(self):
+        return (
+        f'{self.__class__.__name__}('
+        f'{self.id},{self.name},{self.federal_state_id},{self.election_results!r})'
+    )
+
+
+class Federal_State(db.Model):
+    __tablename__ = 'federal_states'
     id = db.Column(db.Integer, primary_key=True)
-    election_area_id = db.Column(db.Integer, db.ForeignKey('election_areas.id'))
-    election_result_id = db.Column(db.Integer, db.ForeignKey('election_results.id'))
+    name = db.Column(db.String)
 
-    area = db.relationship("Election_Area", back_populates="area_results")
-    result = db.relationship("Election_Result", back_populates="area_results")
+    election_results = db.relationship('Election_Result', backref='federal_state', lazy=True)
+
+    constituencies = db.relationship(
+        'Constituency',
+        lazy=True
+    )
+
+    state_id = db.Column(
+        db.Integer,
+        db.ForeignKey('states.id'),
+        nullable=False
+    )
+
+    def __repr__(self):
+        return (
+            f'{self.__class__.__name__}('
+            f'{self.id},{self.name},{self.election_results!r},{self.constituencies!r})'
+        )
+
+class State(db.Model):
+    __tablename__ = 'states'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+
+    federal_states = db.relationship(
+        'Federal_State',
+        lazy=True
+    )
+
+    election_results = db.relationship('Election_Result', backref='state', lazy=True)
+
+    def __repr__(self):
+        return (
+            f'{self.__class__.__name__}('
+            f'{self.id},{self.name},{self.election_results!r},{self.federal_states!r})'
+        )
