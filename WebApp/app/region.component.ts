@@ -7,20 +7,22 @@ import { RegionService } from './region.service'
 @Component({
     selector: 'region-component',
     template: `
-        <input type="text">
-        <div *ngFor="let constituency of constituencies">
-            <a (click)="getElectorialResult(constituency)"> {{constituency.name}} </a>
+        <div>
+            <input type="text">
+            <div *ngFor="let constituency of constituencies">
+                <a (click)="getElectorialResult(constituency)"> {{constituency.name}} </a>
+            </div>
         </div>
-
-        <div *ngIf="electionResults">
+        <div *ngIf="electionPartyResults && electionGeneralResults">
             <h1> Election Results: {{constituencyName}}</h1> 
-            <election-result-graph [electionResults]="electionResults"> </election-result-graph>
+            <election-result-graph [partyResults]="electionPartyResults" [generalResults]="electionGeneralResults" > </election-result-graph>
         </div>
     `
 })
 
 export class RegionComponent {
-    electionResults: ElectionResult[];
+    electionPartyResults: ElectionResult[];
+    electionGeneralResults: ElectionResult[];
 
     constructor(private regionService: RegionService) { }
 
@@ -28,8 +30,11 @@ export class RegionComponent {
 
     @Input('constituencies') constituencies: Constituency[];
 
+    
     getElectorialResult(constituency: Constituency) {
         this.constituencyName = constituency.name;
-        this.regionService.getElectorialResults(constituency.id).then(result => this.electionResults = result);
+        
+        this.regionService.getElectorialResultsForParty(constituency.id).then(result => this.electionPartyResults = result);
+        this.regionService.getElectorialResultsForGeneral(constituency.id).then(result => this.electionGeneralResults = result);
     }
 }

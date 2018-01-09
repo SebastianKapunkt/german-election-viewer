@@ -10,25 +10,26 @@ import { ElectionResult } from './data.models'
                 <canvas baseChart
                     [datasets]="generalChartData"
                     [labels]="generalLabels"
-                    [chartType]="pieChartType"
+                    [chartType]="chartTypeBar"
                     (chartHover)="chartHovered($event)">
                 </canvas>
             </div>
 
             <div style="display: block; width: 800px;">
-            <canvas baseChart
-                [datasets]="partyChartData"
-                [labels]="partyLabels"
-                [chartType]="pieChartType"
-                (chartHover)="chartHovered($event)">
-            </canvas>
-        </div>
+                <canvas baseChart
+                    [datasets]="partyChartData"
+                    [labels]="partyLabels"
+                    [chartType]="chartTypeBar"
+                    (chartHover)="chartHovered($event)">
+                </canvas>
+            </div>
         </div>
     `
 })
 
 export class ElectionGraphComponent implements OnChanges {
-    @Input('electionResults') electionResults: ElectionResult[];
+    @Input('generalResults') generalResults: ElectionResult[];
+    @Input('partyResults') partyResults: ElectionResult[];
 
     constructor() { }
     generalLabels: string[] = [];
@@ -43,17 +44,17 @@ export class ElectionGraphComponent implements OnChanges {
     generalChartData: any[] = [];
     partyChartData: any[] = [];
 
-
-    pieChartType: string = 'bar';
+    chartTypeBar: string = 'bar';
+    chartTypePie: string = 'pie';
 
     ngOnChanges(changes: SimpleChanges): void {
         this.resetDataSet();
 
-        for (let i = 0; i < 4; i++) {
-            this.generalDataFirstPeriod.push(this.electionResults[i].firstPeriodResults)
-            this.generalDataSecondPeriod.push(this.electionResults[i].secondPeriodResults);
+        for (let i = 0; i < this.generalResults.length; i++) {
+            this.generalDataFirstPeriod.push(this.generalResults[i].firstPeriodResults)
+            this.generalDataSecondPeriod.push(this.generalResults[i].secondPeriodResults);
 
-            this.generalLabels.push(this.electionResults[i].partyName);
+            this.generalLabels.push(this.generalResults[i].partyName);
         }
 
         this.generalChartData = [
@@ -61,16 +62,16 @@ export class ElectionGraphComponent implements OnChanges {
             {data: this.generalDataSecondPeriod, label: 'Zweit stimme'}
         ]
 
-        for (let i = 4; i < 9; i++) {
-            this.partyDataFirstPeriod.push(this.electionResults[i].firstPeriodResults);
-            this.partyDataSecondPeriod.push(this.electionResults[i].secondPeriodResults);
+        for (let i = 0; i < 5; i++) {
+            this.partyDataFirstPeriod.push(this.partyResults[i].firstPeriodResults);
+            this.partyDataSecondPeriod.push(this.partyResults[i].secondPeriodResults);
 
-            this.partyLabels.push(this.electionResults[i].partyName);
+            this.partyLabels.push(this.partyResults[i].partyName);
         }
 
         this.partyChartData = [
-            {data: this.partyDataFirstPeriod, label: 'Erst stimme'},
-            {data: this.partyDataSecondPeriod, label: 'Zweit stimme'}
+            {data: this.partyDataFirstPeriod, label: 'Erst Stimme'},
+            {data: this.partyDataSecondPeriod, label: 'Zweit Stimme'}
         ]
     }
 

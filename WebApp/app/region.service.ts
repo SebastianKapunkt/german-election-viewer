@@ -19,8 +19,15 @@ export class RegionService {
             .catch((error) => console.log('no regions: ', error))
     }
 
-    getElectorialResults(constituencyId: number): Promise<ElectionResult[]> {
-        return this.http.get(`${this.regionsUrl}/${constituencyId}/electorial_results`, { headers: this.jwt() })
+    getElectorialResultsForGeneral(constituencyId: number): Promise<ElectionResult[]> {
+        return this.http.get(`${this.regionsUrl}/${constituencyId}/general_election_results`, { headers: this.jwt()})
+            .toPromise()
+            .then(response => response.json().data)
+            .catch((error) => console.log('error getting electorial general results: ', error));
+    }
+
+    getElectorialResultsForParty(constituencyId: number): Promise<ElectionResult[]> {
+        return this.http.get(`${this.regionsUrl}/${constituencyId}/party_election_results`, { headers: this.jwt() })
             .toPromise()
             .then(response => response.json().data)
             .catch((error) => console.log('error getting electorial results: ', error));
