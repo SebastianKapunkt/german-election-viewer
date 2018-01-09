@@ -1,36 +1,52 @@
-import { Component, Input } from '@angular/core'
+import { Component, Input, OnChanges } from '@angular/core'
 
 import { Constituency, ElectionResult } from './data.models'
 
 import { RegionService } from './region.service'
+import { FilterPipe } from './filter-pipe.component'
 
 @Component({
     selector: 'region-component',
     template: `
         <div>
-            <input type="text">
-            <div *ngFor="let constituency of constituencies">
+            <input type="text" [(ngModel)]="term" placeholder="Search region ..">
+            <div *ngFor="let constituency of constituencies | FilterPipe: term">
                 <a (click)="getElectorialResult(constituency)"> {{constituency.name}} </a>
             </div>
         </div>
-        <div *ngIf="electionPartyResults && electionGeneralResults">
-            <h1> Election Results: {{constituencyName}}</h1> 
-            <election-result-graph [partyResults]="electionPartyResults" [generalResults]="electionGeneralResults" > </election-result-graph>
+        
+        <div>
+            <div *ngIf="electionPartyResults">
+                <election-list [electionList]="electionPartyResults" > </election-list>
+            </div>
+        </div>
+
+        <div>
+            <div *ngIf="electionPartyResults && electionGeneralResults">
+                <h1> Election Results: {{constituencyName}}</h1> 
+                <election-result-graph [partyResults]="electionPartyResults" [generalResults]="electionGeneralResults" > </election-result-graph>
+            </div>
         </div>
     `
 })
 
-export class RegionComponent {
+export class RegionComponent implements OnChanges {
     electionPartyResults: ElectionResult[];
     electionGeneralResults: ElectionResult[];
+    term: string;
 
     constructor(private regionService: RegionService) { }
 
+    @Input('constituencies') constituencies: Constituency[];
+    
     private constituencyName: string;
 
-    @Input('constituencies') constituencies: Constituency[];
+    ngOnChanges() {       
+        this.term = ''
+        this.electionGeneralResults = null;
+        this.electionPartyResults = null;
+    }
 
-    
     getElectorialResult(constituency: Constituency) {
         this.constituencyName = constituency.name;
         

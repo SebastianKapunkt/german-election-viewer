@@ -36,8 +36,6 @@ class Region_Controller:
             if item.constituency_id == constituency_id:
                 data_to_handle.append(item)
         
-        print('trimmed: ', data_to_handle[:4])
-
         for item in data_to_handle[:4]:
             final_data.append(
                 {
@@ -46,7 +44,5 @@ class Region_Controller:
                     'secondPeriodResults': item.second_previsional, 'secondPrePeriodResults': item.second_period_previsional
                 }
             )
-
-        print('final data: ', final_data)
 
         return jsonify({'data': final_data})
