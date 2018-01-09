@@ -1,12 +1,20 @@
 from operator import attrgetter
 
 def sort(array):
-    result = []
-    for i in range(0, 4):
-        result.append(array[i])
+    toRemove = []
+    for election in array:
+        if election.party.name == "Wahlberechtigte":
+            toRemove.append(election)
+        if election.party.name == "Wähler":
+            toRemove.append(election)
+        if election.party.name == "Ungültige":
+            toRemove.append(election)
+        if election.party.name == "Gültige":
+            toRemove.append(election)
+    
+    for item in toRemove:
+        array.remove(item)
 
-    sorted_part = array[:4]+sorted(array[4:len(array)], key=lambda item: item.first_previsional)
-    result.append(sorted_part)
+    sortedList = sorted(array, key=lambda x:x.first_previsional, reverse=True)
 
-    print('result: ', result);
-    return result
+    return sortedList
