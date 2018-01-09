@@ -1,10 +1,9 @@
 import os
 import json
 
-from app import app
 from flask import jsonify, send_from_directory
-
 from app.models import Federal_State, Constituency, Election_Result, Party
+from app import app, helper
 
 BASE_URL = os.path.abspath(os.path.dirname(__file__))
 CLIENT_APP_FOLDER = os.path.join(BASE_URL, "../WebApp")
@@ -37,18 +36,26 @@ def constituencies(federal_state_id):
 @app.route('/api/constituency/<int:constituency_id>/electorial_results')
 def electorial_results(constituency_id):
     electorial_results = Election_Result.query.all()
-    electorial_result_data = []
-    for result in electorial_results:
-        if result.constituency_id == constituency_id:
-            electorial_result_data.append(
-                {
-                    'partyName': result.party.name,
-                    'firstPeriodResults': result.first_previsional, 'firstPrePeriodResults': result.first_period_previsional,
-                    'secondPeriodResults': result.second_previsional, 'secondPrePeriodResults': result.second_period_previsional
-                }
-            )
+    data_to_sort = []
+    final_data = []
 
-    return jsonify({'data': electorial_result_data})
+    for item in electorial_results:
+        if item.constituency_id == constituency_id:
+            data_to_sort.append(item)
+
+    sorted_data = helper.sort(data_to_sort)
+
+    print('sorted data: ', sorted_data)
+    for item in sorted_data:
+        final_data.append(
+            {
+                'partyName': item.party.name,
+                'firstPeriodResults': item.first_previsional, 'firstPrePeriodResults': item.first_period_previsional,
+                'secondPeriodResults': item.second_previsional, 'secondPrePeriodResults': item.second_period_previsional
+            }
+        )
+
+    return jsonify({'data': final_data})
 
 
 @app.route('/api/parties')

@@ -7,6 +7,7 @@ import { RegionService } from './region.service'
 @Component({
     selector: 'region-component',
     template: `
+        <input type="text">
         <div *ngFor="let constituency of constituencies">
             <a (click)="getElectorialResult(constituency)"> {{constituency.name}} </a>
         </div>
