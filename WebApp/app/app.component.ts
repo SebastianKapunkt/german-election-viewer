@@ -4,6 +4,7 @@ import { DashboardComponent } from './dashboard.component'
 
 @Component({
   selector: 'app-root',
+  styleUrls: ['css/main.css'],
   template: `
     <dashboard> </dashboard>
   `

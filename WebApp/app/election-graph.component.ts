@@ -4,10 +4,15 @@ import { ElectionResult } from './data.models'
 
 @Component({
     selector: 'election-result-graph',
+    styleUrls: ['css/main.css'],
     template: `
         <div>
-            <div style="display: block; width: 800px;">
-                <canvas baseChart
+            <div>
+                <div class="title"> Wahlberechtigte </div>
+                <div class="header-row">
+                    
+                </div>
+                <canvas width="500" baseChart
                     [datasets]="generalChartData"
                     [labels]="generalLabels"
                     [chartType]="chartTypeBar"
@@ -15,7 +20,11 @@ import { ElectionResult } from './data.models'
                 </canvas>
             </div>
 
-            <div style="display: block; width: 800px;">
+            <div>
+                <div class="title"> 5 Partein mit den meisten Stimmen </div>
+                <div class="header-row">
+                    
+                </div>
                 <canvas baseChart
                     [datasets]="partyChartData"
                     [labels]="partyLabels"

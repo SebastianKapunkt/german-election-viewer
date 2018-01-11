@@ -4,47 +4,25 @@ import { ElectionResult } from './data.models'
 
 @Component({
     selector: 'election-list',
+    styleUrls: ['css/main.css'],
     template: `
         <div> 
-            <table style="border: 1px solid black;">
-                <tr>
+            <table class="election-table">
+                <tr height="30">
                     <th> Patei Name </th>
                     <th> Erst Stimmen </th>
                     <th> Zweit Stimmen </th>
                 </tr>
-                <td>
-                    <ng-container *ngFor="let result of electionList">
-                        <tr> {{result.partyName}} </tr>
-                    </ng-container>
-                </td>
-                <td>
-                    <ng-container *ngFor="let result of electionList">
-                        <tr> {{result.firstPeriodResults}} </tr>
-                    </ng-container>
-                </td>
-                <td>
-                    <ng-container *ngFor="let result of electionList">
-                        <tr> {{result.secondPeriodResults}} </tr>
-                    </ng-container>
-                </td>
+                <ng-container *ngFor="let result of electionList">
+                    <tr>
+                        <td> {{result.partyName}} </td>
+                        <td> {{result.firstPeriodResults}} </td>
+                        <td> {{result.secondPeriodResults}} </td>
+                    </tr>
+                </ng-container>
             </table>
         </div>
-    `,
-
-    styles: [` 
-        table {
-            font-family: arial, sans-serif;
-            border-collapse: collapse;
-            width: auto;
-        }
-        
-        td, th {
-            font-size: 12px;
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
-    }`]
+    `
 })
 
 export class ElectionListComponent {

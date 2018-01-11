@@ -9,18 +9,21 @@ import { RegionService } from './region.service'
 
 @Component({
     selector: "state-list",
+    styleUrls: ['css/main.css'],
     template: `
-    <div> 
-        <h1> States </h1>
-
-        <div *ngFor="let state of allStates">
-            <a (click)="getRegions(state.id)"> {{state.name}} </a>
+    <div class="flex-row">
+        <div> 
+            <div class="title">States</div>
+            <div class="header-row"></div>
+            <div class="box">
+                <div *ngFor="let state of allStates">
+                    <a (click)="getRegions(state)"><div> {{state.name}} </div></a>
+                </div>
+            </div>
         </div>
-    </div>
-    <br>
-    <div *ngIf="constituencies">
-        <h1> Regions </h1>
-        <region-component [constituencies]="constituencies"> </region-component>
+        <ng-container *ngIf="constituencies">
+            <region-component [constituencies]="constituencies" [state_name]="state_name"> </region-component>
+        </ng-container>
     </div>
     `
 })
@@ -28,6 +31,7 @@ import { RegionService } from './region.service'
 export class StateComponent implements OnInit {
     allStates: State[];
     constituencies: Constituency[];
+    state_name: string;
 
     constructor(private stateService: StateService, private regionService: RegionService) {
 
@@ -37,7 +41,8 @@ export class StateComponent implements OnInit {
         this.stateService.getStates().then(result => this.allStates = result);
     }
 
-    getRegions(id: number) {
-        this.regionService.getConstituencies(id).then(result => this.constituencies = result);
+    getRegions(state: State) {
+        this.regionService.getConstituencies(state.id).then(result => this.constituencies = result);
+        this.state_name = state.name;
     }
 }

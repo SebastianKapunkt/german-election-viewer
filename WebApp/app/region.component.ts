@@ -7,26 +7,30 @@ import { FilterPipe } from './filter-pipe.component'
 
 @Component({
     selector: 'region-component',
+    styleUrls: ['css/main.css'],
     template: `
+    <div class="flex-row">
         <div>
-            <input type="text" [(ngModel)]="term" placeholder="Search region ..">
-            <div *ngFor="let constituency of constituencies | FilterPipe: term">
-                <a (click)="getElectorialResult(constituency)"> {{constituency.name}} </a>
+            <div class="title">{{state_name}} </div>
+            <div class="header-row">
+                <input type="text" [(ngModel)]="term" placeholder="Search region ..">
+            </div>
+            <div class="box">
+                <div *ngFor="let constituency of constituencies | FilterPipe: term">
+                    <a (click)="getElectorialResult(constituency)"><div> {{constituency.name}} </div></a>
+                </div>
             </div>
         </div>
-        
         <div>
-            <div *ngIf="electionPartyResults">
+            <div *ngIf="electionPartyResults" style="max-width: 400px;">
+                <div class="title">{{constituencyName}}</div>
                 <election-list [electionList]="electionPartyResults" > </election-list>
             </div>
         </div>
-
-        <div>
-            <div *ngIf="electionPartyResults && electionGeneralResults">
-                <h1> Election Results: {{constituencyName}}</h1> 
-                <election-result-graph [partyResults]="electionPartyResults" [generalResults]="electionGeneralResults" > </election-result-graph>
-            </div>
+        <div *ngIf="electionPartyResults && electionGeneralResults" style="flex-grow: 1;">
+            <election-result-graph [partyResults]="electionPartyResults" [generalResults]="electionGeneralResults" > </election-result-graph>
         </div>
+    </div>
     `
 })
 
@@ -38,6 +42,7 @@ export class RegionComponent implements OnChanges {
     constructor(private regionService: RegionService) { }
 
     @Input('constituencies') constituencies: Constituency[];
+    @Input('state_name') state_name: string;
     
     private constituencyName: string;
 
