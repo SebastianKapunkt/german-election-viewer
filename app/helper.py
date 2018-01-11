@@ -1,20 +1,26 @@
 from operator import attrgetter
 
 def sort(array):
-    toRemove = []
+    to_remove = []
+    remaining = ''
+
     for election in array:
         if election.party.name == "Wahlberechtigte":
-            toRemove.append(election)
+            to_remove.append(election)
         if election.party.name == "Wähler":
-            toRemove.append(election)
+            to_remove.append(election)
         if election.party.name == "Ungültige":
-            toRemove.append(election)
+            to_remove.append(election)
         if election.party.name == "Gültige":
-            toRemove.append(election)
+            to_remove.append(election)
+        if election.party.name == "Übrige":
+            to_remove.append(election)
+            remaining = election
     
-    for item in toRemove:
+    for item in to_remove:
         array.remove(item)
 
-    sortedList = sorted(array, key=lambda x:x.first_previsional, reverse=True)
+    sorted_list = sorted(array, key=lambda x:x.first_previsional, reverse=True)
+    sorted_list.append(remaining)
 
-    return sortedList
+    return sorted_list

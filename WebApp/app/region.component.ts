@@ -28,7 +28,8 @@ import { FilterPipe } from './filter-pipe.component'
             </div>
         </div>
         <div *ngIf="electionPartyResults && electionGeneralResults" style="flex-grow: 1;">
-            <election-result-graph [partyResults]="electionPartyResults" [generalResults]="electionGeneralResults" > </election-result-graph>
+            <election-result-graph [displayXTitles]="true" [results]="electionGeneralResults" [title]="'Wahlberechtige'" > </election-result-graph>
+            <election-result-graph [displayXTitles]="false" [results]="electionPartyResults" [title]="'5 Partein mit den meisten Stimmen'" > </election-result-graph>
         </div>
     </div>
     `

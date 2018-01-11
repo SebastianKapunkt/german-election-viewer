@@ -1,6 +1,8 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core'
+import { Component, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core'
 
 import { ElectionResult } from './data.models'
+
+import { BaseChartDirective } from 'ng2-charts'
 
 @Component({
     selector: 'election-result-graph',
@@ -8,28 +10,17 @@ import { ElectionResult } from './data.models'
     template: `
         <div>
             <div>
-                <div class="title"> Wahlberechtigte </div>
+                <div class="title"> {{title}} </div>
                 <div class="header-row">
                     
                 </div>
-                <canvas width="500" baseChart
-                    [datasets]="generalChartData"
-                    [labels]="generalLabels"
-                    [chartType]="chartTypeBar"
-                    (chartHover)="chartHovered($event)">
-                </canvas>
-            </div>
-
-            <div>
-                <div class="title"> 5 Partein mit den meisten Stimmen </div>
-                <div class="header-row">
-                    
-                </div>
-                <canvas baseChart
-                    [datasets]="partyChartData"
-                    [labels]="partyLabels"
-                    [chartType]="chartTypeBar"
-                    (chartHover)="chartHovered($event)">
+                <canvas style="width: 100%" baseChart
+                    [datasets]="chartData"
+                    [labels]="chartLabels"
+                    [chartType]="chartTyp"
+                    [options]="chartOptions"
+                    (chartHover)="chartHovered($event)"
+                    (chartClick)="chartClicked($event)">
                 </canvas>
             </div>
         </div>
@@ -37,62 +28,75 @@ import { ElectionResult } from './data.models'
 })
 
 export class ElectionGraphComponent implements OnChanges {
-    @Input('generalResults') generalResults: ElectionResult[];
-    @Input('partyResults') partyResults: ElectionResult[];
+    @Input('results') results: ElectionResult[];
+    @Input('title') title: string;
+    @Input('displayXTitles') displayXTitles: boolean;
+
+    @ViewChild(BaseChartDirective) chartWidget: any;
 
     constructor() { }
-    generalLabels: string[] = [];
-    partyLabels: string[] = [];
 
-    generalDataFirstPeriod: number[] = [];
-    generalDataSecondPeriod: number[] = [];
+    chartLabels: string[] = [];
 
-    partyDataFirstPeriod: number[] = [];
-    partyDataSecondPeriod: number[] = [];
-    
-    generalChartData: any[] = [];
-    partyChartData: any[] = [];
+    firstVote: number[] = [];
+    secondVote: number[] = [];
 
-    chartTypeBar: string = 'bar';
-    chartTypePie: string = 'pie';
+    chartOptions = {
+    };
 
-    ngOnChanges(changes: SimpleChanges): void {
+    chartData: any[] = [];
+
+    chartTyp: string = 'bar';
+
+    ngOnChanges(changes: SimpleChanges) {
+
         this.resetDataSet();
 
-        for (let i = 0; i < this.generalResults.length; i++) {
-            this.generalDataFirstPeriod.push(this.generalResults[i].firstPeriodResults)
-            this.generalDataSecondPeriod.push(this.generalResults[i].secondPeriodResults);
+        this.chartOptions = {
+            scales: {
+                responsive: true,
+                xAxes: [{
+                    ticks: {
+                        display: this.displayXTitles
+                    }
+                }]
+            }
+         }
+        setTimeout(() => {
+            this.chartWidget.refresh();
+        }, 0)
 
-            this.generalLabels.push(this.generalResults[i].partyName);
+        if (this.results.length > 4) {
+            this.iterateXElems(5);
+        } else {
+            this.iterateXElems(this.results.length);
         }
 
-        this.generalChartData = [
-            {data: this.generalDataFirstPeriod, label: 'Erst stimme'},
-            {data: this.generalDataSecondPeriod, label: 'Zweit stimme'}
-        ]
+        this.chartData = [
+            { data: this.firstVote, label: 'Erst stimme' },
+            { data: this.secondVote, label: 'Zweit stimme' }
+        ];
+    }
 
-        for (let i = 0; i < 5; i++) {
-            this.partyDataFirstPeriod.push(this.partyResults[i].firstPeriodResults);
-            this.partyDataSecondPeriod.push(this.partyResults[i].secondPeriodResults);
+    iterateXElems(numOfElemes: number) {
+        for (let i = 0; i < numOfElemes; i++) {
+            this.firstVote.push(this.results[i].firstPeriodResults)
+            this.secondVote.push(this.results[i].secondPeriodResults);
 
-            this.partyLabels.push(this.partyResults[i].partyName);
+            this.chartLabels.push(this.results[i].partyName);
         }
-
-        this.partyChartData = [
-            {data: this.partyDataFirstPeriod, label: 'Erst Stimme'},
-            {data: this.partyDataSecondPeriod, label: 'Zweit Stimme'}
-        ]
     }
 
     resetDataSet() {
-        this.generalDataFirstPeriod = [];
-        this.generalDataSecondPeriod = [];
+        this.firstVote = [];
+        this.secondVote = [];
 
-        this.generalLabels = [];
+        this.chartLabels = [];
+    }
 
-        this.partyDataFirstPeriod = [];
-        this.partyDataSecondPeriod = [];
+    public chartClicked(e: any): void {
+    }
 
-        this.partyLabels = [];
+    public chartHovered(e: any): void {
     }
 }
