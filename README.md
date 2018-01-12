@@ -4,6 +4,41 @@
 
 # 1. Installation
 
+download the repository
+
+    git clone git@github.com:SebastianKapunkt/german-election-viewer.git
+
+cd into the project
+
+    cd german-election-viewer
+
+install requirements
+
+    german-election-viewer$: pip install -r requirements.txt
+
+install node dependencies
+
+    german-election-viewer$: cd WebApp
+    german-election-viewer/WebApp$: npm install
+    
+build angular2 typescripts
+
+    german-election-viewer/WebApp$: npm start
+
+
+set envirement varaible
+
+    german-election-viewer$: export FLASK_APP=app/__init__.py
+
+start the flask server from root folder
+
+    german-election-viewer$: flask run
+
+open localhost
+
+    http://localhost:5000/
+
+
 # 2. Parsing btw17_kerg.csv
 
 Before we started to parse we had to figure out how the csv is structured. To make it more human readable we opened it in 'Numbers'.
