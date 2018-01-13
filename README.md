@@ -100,3 +100,78 @@ def get_parties(rows):
 4. How all this works together can be seen in ```election_reader.py```
 
 # 3. Representation as View
+
+Once all the Information were getherd it was important to identify which of those were needed and how they should be formated for the frontend.
+For this application the frontend which will be a single page application, will be implemented with the latest Angular 2 version.
+
+## API Calls
+To create a single page application several API calls had to be implemented which will supply the data on demand to the application.
+
+``` /api/states ``` <br>
+Will return all states of Germany
+
+``` /api/states/<int:federal_state_id>/constituencies ``` <br>
+Will return the constituencies of a chosen state
+
+``` /api/constituency/<int:constituency_id>/general_election_results ``` <br>
+Will return the general information regarding the election of a chosen constituency.
+
+``` /api/constituency/<int:constituency_id>/party_election_results ``` <br>
+Will return the election results for the parties of a chosen constituency.
+
+## Handling and Parsing the Data
+
+The data which will be queried from a SQL Database need to be parsed into json objects so it can be used in the frontend.
+```python
+ states_data = []
+        all_states = Federal_State.query.all()
+
+        for state in all_states:
+            states_data.append({'id': state.id, 'name': state.name})
+
+        return jsonify({'data': states_data})
+```
+
+The code snipped above will take the information queried, create an array of objects with the attributes id and name and send a json response like: 
+```typescript
+[   
+    data: {
+        {
+            id: 1,
+            name: 'Schleswig-Hollstein'
+        },
+        ...
+    } 
+]
+```
+to the browser.
+
+## Using the Data
+To use the information create above, we implemented two service classes for the front end.
+
+1. state.service.ts
+2. region.service.ts
+
+The state.service will do all the queries regarding states.
+
+The region.service on the other hand will query all the information focusing on regions ('constituencies').
+
+To elaborate on the states example, the front end http get request for the api url: /api/states looks as follows:
+
+
+```typescript
+getStates(): Promise<State[]> {
+    return this.http.get('/api/states', { headers: this.jwt() })
+        .toPromise()
+        .then(response => response.json().data)
+        .catch((error) => console.log('no states: ', error));
+}
+```
+
+This function will emit a http.get request to the specified url and provide the created data from the backend as a json object, if anything goes wrong during this process the function will output an error.
+
+## Displaying the Data
+
+The whole app will consist of smaller components which will use the data supplied by the services and represent each segment of the webpage.
+
+<img src="pictures/website-components.png">
